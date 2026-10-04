@@ -15,7 +15,7 @@ permissions:
 jobs:
   tier1:
     name: Tier 1 (Mechanical)
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '"ubuntu-latest"') }}
     services:
       postgres:
         image: pgvector/pgvector:pg16
@@ -43,7 +43,7 @@ jobs:
 
   tier2:
     name: Tier 2 (LLM Skills)
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '"ubuntu-latest"') }}
     # Runs on every push/PR now (promoted from schedule-only in v0.19.0).
     # Tier 1 must pass first; Tier 2 uses OPENAI_API_KEY + ANTHROPIC_API_KEY
     # from repo/org secrets. Nightly + manual triggers still supported via

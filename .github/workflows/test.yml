@@ -28,7 +28,7 @@ jobs:
   # the deny-listed doc files.
   # ──────────────────────────────────────────────────────────────────────
   cache-check:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '"ubuntu-latest"') }}
     outputs:
       hit: ${{ steps.lookup.outputs.cache-hit }}
       hash: ${{ steps.compute.outputs.hash }}
@@ -71,7 +71,7 @@ jobs:
   gitleaks:
     needs: cache-check
     if: needs.cache-check.outputs.hit != 'true'
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '"ubuntu-latest"') }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
         with:
@@ -89,7 +89,7 @@ jobs:
     # the 20 checks via & + wait (~5s vs ~15-25s sequential).
     needs: cache-check
     if: needs.cache-check.outputs.hit != 'true'
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '"ubuntu-latest"') }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6  # v2
@@ -109,7 +109,7 @@ jobs:
     # shard 1's overload).
     needs: cache-check
     if: needs.cache-check.outputs.hit != 'true'
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '"ubuntu-latest"') }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6  # v2
@@ -133,7 +133,7 @@ jobs:
     # the matrix because it's light (~42s).
     needs: cache-check
     if: needs.cache-check.outputs.hit != 'true'
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '"ubuntu-latest"') }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6  # v2
@@ -155,7 +155,7 @@ jobs:
     # dominate a shard's wallclock. Runs in parallel with the matrix.
     needs: cache-check
     if: needs.cache-check.outputs.hit != 'true'
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '"ubuntu-latest"') }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6  # v2
@@ -190,7 +190,7 @@ jobs:
     # weights fall back to corpus median — new test files work immediately.
     needs: cache-check
     if: needs.cache-check.outputs.hit != 'true'
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '"ubuntu-latest"') }}
     strategy:
       fail-fast: false
       matrix:
@@ -219,7 +219,7 @@ jobs:
   cache-write:
     needs: [cache-check, gitleaks, verify, serial-tests, slow-eval-longmemeval, slow-entity-resolve-perf, test]
     if: success() && needs.cache-check.outputs.hit != 'true'
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '"ubuntu-latest"') }}
     steps:
       - name: Create cache marker
         run: |
@@ -241,7 +241,7 @@ jobs:
   test-status:
     needs: [cache-check, gitleaks, verify, serial-tests, slow-eval-longmemeval, slow-entity-resolve-perf, test]
     if: always()
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '"ubuntu-latest"') }}
     steps:
       - name: Aggregate result
         run: |
